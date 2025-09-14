@@ -1,67 +1,125 @@
-import { Sidebar } from "@/components/layout/sidebar"
-import { StatsCards } from "@/components/dashboard/stats-cards"
-import { ActivityChart } from "@/components/dashboard/activity-chart"
-import { RecentActivities } from "@/components/dashboard/recent-activities"
-import { ProgressOverview } from "@/components/dashboard/progress-overview"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { BookOpen, Target, BarChart3, Users } from "lucide-react"
 
 export default function HomePage() {
-  // بيانات تجريبية - سيتم استبدالها بالبيانات الحقيقية من قاعدة البيانات
-  const statsData = {
-    totalActivities: 156,
-    completedToday: 8,
-    totalDuration: 245, // بالدقائق
-    weeklyProgress: 78,
-  }
-
   return (
-    <div className="flex h-screen bg-background">
-      <Sidebar />
-      <main className="flex-1 overflow-auto">
-        <div className="container mx-auto p-6 space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground font-amiri">لوحة التحكم</h1>
-              <p className="text-muted-foreground">مرحباً بك، تابع تقدمك في حفظ القرآن الكريم</p>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
+      {/* Header */}
+      <header className="container mx-auto px-4 py-6">
+        <nav className="flex items-center justify-between">
+          <div className="flex items-center space-x-2 space-x-reverse">
+            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center">
+              <BookOpen className="w-6 h-6 text-white" />
             </div>
-            <div className="text-left">
-              <p className="text-sm text-muted-foreground">اليوم</p>
-              <p className="text-lg font-semibold">{new Date().toLocaleDateString("ar-SA")}</p>
-            </div>
+            <h1 className="text-2xl font-bold text-emerald-800 font-amiri">حفظ القرآن</h1>
           </div>
-
-          {/* بطاقات الإحصائيات */}
-          <StatsCards {...statsData} />
-
-          {/* الرسوم البيانية والأنشطة */}
-          <div className="grid gap-6 md:grid-cols-4">
-            <ActivityChart />
-            <ProgressOverview />
+          <div className="flex items-center space-x-4 space-x-reverse">
+            <Link href="/auth/login">
+              <Button variant="ghost" className="text-emerald-700 hover:text-emerald-800">
+                تسجيل الدخول
+              </Button>
+            </Link>
+            <Link href="/auth/signup">
+              <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white">إنشاء حساب</Button>
+            </Link>
           </div>
+        </nav>
+      </header>
 
-          {/* الأنشطة الأخيرة */}
-          <div className="grid gap-6 md:grid-cols-4">
-            <RecentActivities />
-            <div className="col-span-1">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">الهدف اليومي</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center space-y-4">
-                    <div className="text-4xl font-bold text-primary">8/10</div>
-                    <p className="text-sm text-muted-foreground">أنشطة مكتملة اليوم</p>
-                    <div className="w-full bg-secondary rounded-full h-2">
-                      <div className="bg-primary h-2 rounded-full" style={{ width: "80%" }}></div>
-                    </div>
-                    <p className="text-xs text-muted-foreground">80% من الهدف اليومي</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+      {/* Hero Section */}
+      <section className="container mx-auto px-4 py-20 text-center">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-5xl font-bold text-emerald-800 mb-6 font-amiri leading-tight">
+            رحلتك في حفظ القرآن الكريم
+          </h2>
+          <p className="text-xl text-emerald-600 mb-8 leading-relaxed">
+            نظام شامل لإدارة وتتبع حفظ القرآن الكريم مع إحصائيات مفصلة وأهداف يومية
+          </p>
+          <div className="flex items-center justify-center space-x-4 space-x-reverse">
+            <Link href="/auth/signup">
+              <Button size="lg" className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-8 py-3 text-lg">
+                ابدأ رحلتك الآن
+              </Button>
+            </Link>
+            <Link href="/auth/login">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-emerald-600 text-emerald-700 px-8 py-3 text-lg bg-transparent"
+              >
+                لدي حساب بالفعل
+              </Button>
+            </Link>
           </div>
         </div>
-      </main>
+      </section>
+
+      {/* Features Section */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="text-center mb-12">
+          <h3 className="text-3xl font-bold text-emerald-800 mb-4 font-amiri">ميزات التطبيق</h3>
+          <p className="text-emerald-600 text-lg">كل ما تحتاجه لإدارة رحلة حفظ القرآن الكريم</p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="text-center border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <div className="mx-auto w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mb-4">
+                <BookOpen className="w-6 h-6 text-white" />
+              </div>
+              <CardTitle className="text-emerald-800">إدارة الحصون</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription className="text-emerald-600">
+                تنظيم وإدارة حفظ الحصون المختلفة مع تتبع التقدم
+              </CardDescription>
+            </CardContent>
+          </Card>
+
+          <Card className="text-center border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <div className="mx-auto w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mb-4">
+                <Target className="w-6 h-6 text-white" />
+              </div>
+              <CardTitle className="text-emerald-800">أهداف يومية</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription className="text-emerald-600">تحديد أهداف يومية وتتبع إنجازها بشكل مستمر</CardDescription>
+            </CardContent>
+          </Card>
+
+          <Card className="text-center border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <div className="mx-auto w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mb-4">
+                <BarChart3 className="w-6 h-6 text-white" />
+              </div>
+              <CardTitle className="text-emerald-800">إحصائيات مفصلة</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription className="text-emerald-600">رسوم بيانية وإحصائيات شاملة لتتبع التقدم</CardDescription>
+            </CardContent>
+          </Card>
+
+          <Card className="text-center border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <div className="mx-auto w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center mb-4">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <CardTitle className="text-emerald-800">ملف شخصي</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription className="text-emerald-600">إدارة الملف الشخصي والإعدادات والإنجازات</CardDescription>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="container mx-auto px-4 py-8 text-center">
+        <p className="text-emerald-600">© 2024 تطبيق حفظ القرآن الكريم. جميع الحقوق محفوظة.</p>
+      </footer>
     </div>
   )
 }

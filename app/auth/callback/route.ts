@@ -1,3 +1,4 @@
+// app/auth/callback/route.ts
 import { createServerClient } from "@supabase/ssr"
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
@@ -5,7 +6,7 @@ import type { NextRequest } from "next/server"
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get("code")
-  const next = searchParams.get("next") ?? "/"
+  const next = searchParams.get("next") ?? "/dashboard"
 
   if (code) {
     const supabase = createServerClient(
@@ -17,10 +18,10 @@ export async function GET(request: NextRequest) {
             return request.cookies.get(name)?.value
           },
           set(name: string, value: string, options: any) {
-            request.cookies.set({ name, value, ...options })
+            // لا نستطيع تعديل request.cookies مباشرة
           },
           remove(name: string, options: any) {
-            request.cookies.set({ name, value: "", ...options })
+            // لا نستطيع تعديل request.cookies مباشرة
           },
         },
       },
@@ -28,7 +29,8 @@ export async function GET(request: NextRequest) {
 
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`)
+      const response = NextResponse.redirect(`${origin}${next}`)
+      return response
     }
   }
 

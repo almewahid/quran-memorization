@@ -2,8 +2,11 @@ import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 
 export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
+  // 🟢 نبدأ برد فارغ ونبني فوقه
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
   })
 
   const supabase = createServerClient(
@@ -11,34 +14,36 @@ export async function updateSession(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return request.cookies.getAll()
+        get(name: string) {
+          return request.cookies.get(name)?.value
         },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({
-            request,
-          })
-          cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options))
+        set(name: string, value: string, options: any) {
+          response.cookies.set(name, value, options)
+        },
+        remove(name: string, options: any) {
+          response.cookies.set(name, "", { ...options, maxAge: 0 })
         },
       },
-    },
+    }
   )
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (
-    request.nextUrl.pathname !== "/" &&
-    !user &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
-  ) {
-    const url = request.nextUrl.clone()
-    url.pathname = "/auth/login"
-    return NextResponse.redirect(url)
+  const pathname = request.nextUrl.pathname
+  const isAuthPage = pathname.startsWith("/auth")
+  const isHomePage = pathname === "/"
+
+  // ✅ لو المستخدم داخل /auth/* وهو مسجّل دخول → يحوّل للـ Dashboard
+  if (user && isAuthPage) {
+    return NextResponse.redirect(new URL("/dashboard", request.url))
   }
 
-  return supabaseResponse
+  // 🔒 لو المستخدم مش مسجل دخول وحاول يفتح صفحة محمية (≠ "/" و ≠ /auth/*)
+  if (!user && !isAuthPage && !isHomePage) {
+    return NextResponse.redirect(new URL("/auth/login", request.url))
+  }
+
+  return response
 }

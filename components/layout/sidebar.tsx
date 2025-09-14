@@ -6,12 +6,15 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { LayoutDashboard, BookOpen, Settings, User, Menu, X } from "lucide-react"
+import { LayoutDashboard, BookOpen, Settings, User, Menu, X, LogOut } from "lucide-react"
+import { createClient } from "@/lib/supabase/client"
+import { useRouter } from "next/navigation"
+import { useUser } from "@/hooks/use-user"
 
 const navigation = [
   {
-    name: "الملخص",
-    href: "/",
+    name: "لوحة التحكم",
+    href: "/dashboard",
     icon: LayoutDashboard,
   },
   {
@@ -34,6 +37,14 @@ const navigation = [
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
+  const { user, profile } = useUser()
+
+  const handleLogout = async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push("/auth/login")
+  }
 
   return (
     <>
@@ -87,16 +98,25 @@ export function Sidebar() {
           </ScrollArea>
 
           {/* التذييل */}
-          <div className="border-t border-border p-4">
+          <div className="border-t border-border p-4 space-y-4">
             <div className="flex items-center gap-3">
               <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
                 <User className="h-4 w-4 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">مستخدم تجريبي</p>
-                <p className="text-xs text-muted-foreground truncate">demo@example.com</p>
+                <p className="text-sm font-medium truncate">{profile?.full_name || "مستخدم"}</p>
+                <p className="text-xs text-muted-foreground truncate">{user?.email || ""}</p>
               </div>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4 ml-2" />
+              تسجيل الخروج
+            </Button>
           </div>
         </div>
       </div>
